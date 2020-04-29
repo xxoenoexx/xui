@@ -59,9 +59,8 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 	// Create new command.
 	xui::input_command command ( &m_Keys );
 
-	// Add a new key to the held ptr.
+	// Flip as a newly held key.
 	static auto add_key = [ ] ( xui::input_command& command , std::uint16_t virtual_key ) {
-		// Test if actively held.
 		if ( command.m_Keys_ptr->test ( virtual_key ) )
 			return;
 
@@ -72,9 +71,8 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 		command.m_Keys_action.flip ( virtual_key );
 	};
 
-	// Add a new key to the held ptr.
+	// Flip as a newly released key.
 	static auto remove_key = [ ] ( xui::input_command& command , std::uint16_t virtual_key ) {
-		// Test if actively held.
 		if ( !command.m_Keys_ptr->test ( virtual_key ) )
 			return;
 
