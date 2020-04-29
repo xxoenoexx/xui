@@ -1,4 +1,3 @@
-
 #ifndef xui_math_helper
 #define xui_math_helper
 
@@ -114,7 +113,7 @@ namespace xui {
 
 		// --
 
-			// Get begin iterator.
+		// Get begin iterator.
 		auto begin ( void ) { return m_Elems.begin ( ); };
 
 		// Get end iterator.
@@ -202,7 +201,6 @@ namespace xui {
 		};
 
 		// --
-
 
 		template < std::size_t stSz >
 		auto& operator = ( const xui::vector < stSz , tTy >& right ) {

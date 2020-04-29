@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef xui_distrubution
 #define xui_distrubution
 

@@ -1,4 +1,3 @@
-
 #ifndef xui_api_object_base
 #define xui_api_object_base
 
