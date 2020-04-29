@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef xui_api
 #define xui_api
 
@@ -44,7 +42,7 @@ namespace xui {
 			// Deconstructor.
 			~api_director ( void ) = default;
 		};
-	};
+	}; // !!! details
 
 	// Api.
 	extern std::unique_ptr < details::api_director > g_Api;

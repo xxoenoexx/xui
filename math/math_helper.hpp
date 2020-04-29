@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef xui_math_helper
 #define xui_math_helper
@@ -47,7 +46,7 @@ namespace xui {
 	namespace math {
 		// Accumulation of Sqrd tTy and tRest.
 		template < typename tTy , typename... tRest > requires concepts::iSqrable_variadic_operation < tTy , tRest... >
-			auto accumulate_sqr ( tTy n , tRest... q ) { return math::accumulate_sqr ( n , q... ); };
+		auto accumulate_sqr ( tTy n , tRest... q ) { return math::accumulate_sqr ( n , q... ); };
 	}; // !!! math
 
 	// --
@@ -162,12 +161,12 @@ namespace xui {
 		// --
 
 			// Gets element at 'i'.
-		auto& operator [] ( const std::size_t i ) {
+		auto& operator [] ( const std::size_t& i ) {
 			return m_Elems [ i ];
 		};
 
 		template < typename stTy >
-		auto& operator += ( const stTy right ) {
+		auto& operator += ( const stTy& right ) {
 			for ( auto& Elem : m_Elems )
 				Elem += right;
 
@@ -176,7 +175,7 @@ namespace xui {
 		};
 
 		template < typename stTy >
-		auto& operator -= ( const stTy right ) {
+		auto& operator -= ( const stTy& right ) {
 			for ( auto& Elem : m_Elems )
 				Elem -= right;
 
@@ -185,7 +184,7 @@ namespace xui {
 		};
 
 		template < typename stTy >
-		auto& operator *= ( const stTy right ) {
+		auto& operator *= ( const stTy& right ) {
 			for ( auto& Elem : m_Elems )
 				Elem *= right;
 
@@ -194,7 +193,7 @@ namespace xui {
 		};
 
 		template < typename stTy >
-		auto& operator /= ( const stTy right ) {
+		auto& operator /= ( const stTy& right ) {
 			for ( auto& Elem : m_Elems )
 				Elem *= right;
 
@@ -206,8 +205,8 @@ namespace xui {
 
 
 		template < std::size_t stSz >
-		auto& operator = ( const xui::vector < stSz , tTy > right ) {
-			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n = q; } );
+		auto& operator = ( const xui::vector < stSz , tTy >& right ) {
+			return for_impl ( right , [ ] ( tTy& n , const tTy& q ) { return n = q; } );
 		};
 
 		template < typename... tRest >
@@ -218,59 +217,59 @@ namespace xui {
 		};
 
 		template < std::size_t stSz >
-		auto& operator -= ( const xui::vector < stSz , tTy > right ) {
-			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n -= q; } );
+		auto& operator -= ( const xui::vector < stSz , tTy >& right ) {
+			return for_impl ( right , [ ] ( tTy& n , const tTy& q ) { return n -= q; } );
 		};
 
 		template < std::size_t stSz >
-		auto& operator += ( const xui::vector < stSz , tTy > right ) {
-			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n += q; } );
+		auto& operator += ( const xui::vector < stSz , tTy >& right ) {
+			return for_impl ( right , [ ] ( tTy& n , const tTy& q ) { return n += q; } );
 		};
 
 		template < std::size_t stSz >
-		auto& operator /= ( const xui::vector < stSz , tTy > right ) {
-			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n /= q; } );
+		auto& operator /= ( const xui::vector < stSz , tTy >& right ) {
+			return for_impl ( right , [ ] ( tTy& n , const tTy& q ) { return n /= q; } );
 		};
 
 		template < std::size_t stSz >
-		auto& operator *= ( const xui::vector < stSz , tTy > right ) {
-			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n *= q; } );
+		auto& operator *= ( const xui::vector < stSz , tTy >& right ) {
+			return for_impl ( right , [ ] ( tTy& n , const tTy& q ) { return n *= q; } );
 		};
 
 		// Is greater than.
 		template < std::size_t stSz >
-		auto operator > ( const xui::vector < stSz , tTy > right ) const {
-			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n > q; } );
+		auto operator > ( const xui::vector < stSz , tTy >& right ) const {
+			return for_until_impl ( right , [ ] ( const tTy& n , const tTy& q ) { return  n > q; } );
 		};
 
 		// Is less than.
 		template < std::size_t stSz >
-		auto operator < ( const xui::vector < stSz , tTy > right ) const {
-			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n < q; } );
+		auto operator < ( const xui::vector < stSz , tTy >& right ) const {
+			return for_until_impl ( right , [ ] ( const tTy& n , const tTy& q ) { return  n < q; } );
 		};
 
 		// Is greater than or equal to.
 		template < std::size_t stSz >
-		auto operator >= ( const xui::vector < stSz , tTy > right ) const {
-			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n >= q; } );
+		auto operator >= ( const xui::vector < stSz , tTy >& right ) const {
+			return for_until_impl ( right , [ ] ( const tTy& n , const tTy& q ) { return  n >= q; } );
 		};
 
 		// Is less than or equal to.
 		template < std::size_t stSz >
-		auto operator <= ( const xui::vector < stSz , tTy > right ) const {
-			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n <= q; } );
+		auto operator <= ( const xui::vector < stSz , tTy >& right ) const {
+			return for_until_impl ( right , [ ] ( const tTy& n , const tTy& q ) { return  n <= q; } );
 		};
 
 		// Is equal to.
 		template < std::size_t stSz >
-		auto operator == ( const xui::vector < stSz , tTy > right ) const {
-			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n == q; } );
+		auto operator == ( const xui::vector < stSz , tTy >& right ) const {
+			return for_until_impl ( right , [ ] ( const tTy& n , const tTy& q ) { return  n == q; } );
 		};
 
 		// Isn't equal to.
 		template < std::size_t stSz >
-		auto operator != ( const xui::vector < stSz , tTy > right ) const {
-			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n != q; } );
+		auto operator != ( const xui::vector < stSz , tTy >& right ) const {
+			return for_until_impl ( right , [ ] ( const tTy& n , const tTy& q ) { return  n != q; } );
 		};
 
 		// --
@@ -282,7 +281,7 @@ namespace xui {
 		};
 
 		// Is inside boundaries of a begin point and designated size.
-		bool inside ( const xui::vector < tSz , tTy > begin , const xui::vector < tSz , tTy > size ) const {
+		bool inside ( const xui::vector < tSz , tTy >& begin , const xui::vector < tSz , tTy >& size ) const {
 			// initialize to start point.
 			auto end { begin };
 			

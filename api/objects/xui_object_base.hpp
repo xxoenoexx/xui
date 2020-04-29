@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef xui_api_object_base
 #define xui_api_object_base
@@ -20,6 +19,12 @@ namespace xui {
 
 	class object_base {
 	public:
+		// Constructor.
+		object_base ( xui::vector_2d <> location , xui::vector_2d <> size ) : m_Location { location } , m_Size { size } { };
+
+		// Deconstructor.
+		~object_base ( void ) = default;
+
 		// Location and size of object.
 		xui::vector_2d <> m_Location , m_Size;
 
@@ -38,7 +43,7 @@ namespace xui {
 		// Render object.
 		virtual void render ( void ) = 0;
 	};
-};
+}; // !!! xui
 
 
 #endif // !!! xui_api_object_base

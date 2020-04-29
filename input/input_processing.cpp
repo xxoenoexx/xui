@@ -97,7 +97,7 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 		add_key ( command , VK_MBUTTON );
 		break;
 	case WM_KEYDOWN:
-		add_key ( command , wparam );
+		add_key ( command , static_cast < std::uint16_t > ( wparam ) );
 		break;
 	case WM_LBUTTONUP:
 		remove_key ( command , VK_LBUTTON );
@@ -109,7 +109,7 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 		remove_key ( command , VK_MBUTTON );
 		break;
 	case WM_KEYUP:
-		remove_key ( command , wparam );
+		remove_key ( command , static_cast < std::uint16_t > ( wparam ) );
 		break;
 		// Process mouse scrolling.
 	case WM_MOUSEWHEEL:

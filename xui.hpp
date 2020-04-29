@@ -1,8 +1,6 @@
-#pragma once
-
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif /// !!! NOMINMAX
+#endif // !!! NOMINMAX
 
 #ifndef cxx_inc
 #define cxx_inc
@@ -11,6 +9,7 @@
 #include <cstddef>
 #include <array>
 #include <functional>
+#include <ranges>
 #include <bitset>
 #include <concepts>
 #include <iostream>

@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef xui_api_utility
 #define xui_api_utility
 
@@ -11,6 +9,8 @@ namespace xui {
 		protected:
 			// Currently active object.
 			object_base* m_Active_ptr;
+
+			friend input_distributor;
 		public:
 			// Constructor.
 			base_api ( void ) : m_Active_ptr { } { };
@@ -23,8 +23,8 @@ namespace xui {
 				return m_Active_ptr;
 			};
 		};
-	};
-};
+	}; // !!! details
+}; // !!! xui
 
 
 #endif // !!! xui_api_utility
