@@ -65,41 +65,41 @@ namespace xui {
 	private:
 		// For all plausible elements.
 		template < std::size_t stSz , typename tFunc >
-			auto& for_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) {
-				constexpr auto min_size = std::min ( tSz - 1 , stSz - 1 );
-				
-				// Operation.
-				operation ( m_Elems [ i ] , other [ i ] );
+		auto& for_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) {
+			constexpr auto min_size = std::min ( tSz - 1 , stSz - 1 );
 
-				if ( i >= min_size )
-					return *this;
+			// Operation.
+			operation ( m_Elems [ i ] , other [ i ] );
 
-				// Recursion.
-				return for_impl ( other , operation , ++i );
-			};
+			if ( i >= min_size )
+				return *this;
 
-			// For all plausible elements.
-			template < std::size_t stSz , typename tFunc >
-			auto for_until_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) const {
-				constexpr auto min_size = std::min ( tSz - 1 , stSz - 1 );
+			// Recursion.
+			return for_impl ( other , operation , ++i );
+		};
 
-				// Failed operation.
-				if ( !operation ( m_Elems [ i ] , other [ i ] ) )
-					return false;
+		// For all plausible elements.
+		template < std::size_t stSz , typename tFunc >
+		auto for_until_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) const {
+			constexpr auto min_size = std::min ( tSz - 1 , stSz - 1 );
 
-				// Met maximum index.
-				if ( i >= min_size )
-					return true;
+			// Failed operation.
+			if ( !operation ( m_Elems [ i ] , other [ i ] ) )
+				return false;
 
-				// Recursion.
-				return for_until_impl ( other , operation , ++i );
-			};
+			// Met maximum index.
+			if ( i >= min_size )
+				return true;
 
-			// Get length of m_Elems.
-			template < std::size_t... tIns >
-			auto length_impl ( std::index_sequence < tIns... > ) {
-				return math::accumulate_sqr ( m_Elems [ tIns ]... );
-			};
+			// Recursion.
+			return for_until_impl ( other , operation , ++i );
+		};
+
+		// Get length of m_Elems.
+		template < std::size_t... tIns >
+		auto length_impl ( std::index_sequence < tIns... > ) {
+			return math::accumulate_sqr ( m_Elems [ tIns ]... );
+		};
 	public:
 		// Construct.
 		template < typename... tRest >
