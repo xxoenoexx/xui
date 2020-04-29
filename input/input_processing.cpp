@@ -31,18 +31,18 @@ auto xui::details::input_distributor::distribute ( xui::input_command& command )
 		if ( !next->m_Api_ptr )
 			next->m_Api_ptr = xui::g_Api.get ( );
 
-		// Set disabled flag.
+		// Disable other objects while one has taken focus.
 		if ( xui::g_Api->m_Active_ptr && xui::g_Api->m_Active_ptr != next.get ( ) )
 			next->m_Flags.set ( xui::OBJECT_FLAG_DISABLED , TRUE );
 
-		// Disable other forms while another form is active. 
+		// Re-enable objects that were formerly disabled.
 		if ( !xui::g_Api->m_Active_ptr && next->m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
 			next->m_Flags.flip ( xui::OBJECT_FLAG_DISABLED );
 
-		// Run input against command.
+		// Run objects input against command.
 		next->input ( command );
 
-		// Don't call original wndproc; we have a form handling it.
+		// An object was able to process the command.
 		if ( next->m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) && !cogitation )
 			cogitation = true;
 	};
@@ -82,6 +82,7 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 		command.m_Keys_action.flip ( virtual_key );
 	};
 
+	// Map msg to the corresponding virtual key and activities.
 	switch ( msg ) {
 	case WM_LBUTTONDOWN:
 		add_key ( command , VK_LBUTTON );
@@ -107,11 +108,12 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 	case WM_KEYUP:
 		remove_key ( command , wparam );
 		break;
+		// Process mouse scrolling.
 	case WM_MOUSEWHEEL:
 		command.mouse.m_Scroll = -( static_cast < std::int16_t > ( HIWORD ( wparam ) ) / 120 ) * 2;
 		break;
 	default:
-		/// Update mouse location.
+		// Update mouse location.
 		if ( msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST ) {
 			command.mouse.m_Location ( 
 				static_cast < std::uint32_t > ( LOWORD ( lparam ) ) ,
@@ -119,7 +121,8 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 			); break;
 		};
 
-		return FALSE;
+		// Ignore and let Wndproc handle it.
+		return false;
 	};
 
 	// Distribute input.
