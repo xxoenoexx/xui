@@ -25,18 +25,20 @@ namespace xui {
 			dependency_vector < xui::object_base > m_Forms;
 
 			// Input distribution.
-			std::unique_ptr < xui::details::input_distributor > m_Input_distribution;
+			std::unique_ptr < xui::details::input_distributor > m_Input_distribution_ptr;
 
+			// Friendship between Api and Input distribution.
 			friend class xui::details::input_distributor;
 		public:
 			// Constructor.
 			api_director ( HWND hwnd ) : base_api ( ) { 
 				// Setup input distribution.
-				m_Input_distribution = std::make_unique < xui::details::input_distributor > ( hwnd );
+				m_Input_distribution_ptr = std::make_unique < xui::details::input_distributor > ( hwnd );
 			};
 
-			auto input_distribution ( ) {
-				return m_Input_distribution.get ( );
+			// Get input distribution.
+			auto input_distribution ( void ) {
+				return m_Input_distribution_ptr.get ( );
 			};
 
 			// Deconstructor.
@@ -44,7 +46,7 @@ namespace xui {
 		};
 	};
 
-	// API
+	// Api.
 	extern std::unique_ptr < details::api_director > g_Api;
 };
 

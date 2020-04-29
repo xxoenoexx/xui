@@ -44,7 +44,7 @@ auto xui::details::input_distributor::distribute ( xui::input_command& command )
 
 		// Don't call original wndproc; we have a form handling it.
 		if ( next->m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) && !cogitation )
-			cogitation = TRUE;
+			cogitation = true;
 	};
 
 	// Successfully distributed input.
@@ -113,9 +113,10 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 	default:
 		/// Update mouse location.
 		if ( msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST ) {
-			command.mouse.m_Location (	static_cast < std::uint32_t > ( LOWORD ( lparam ) ) ,
-										static_cast < std::uint32_t > ( HIWORD ( lparam ) ) );
-			break;
+			command.mouse.m_Location ( 
+				static_cast < std::uint32_t > ( LOWORD ( lparam ) ) ,
+				static_cast < std::uint32_t > ( HIWORD ( lparam ) ) 
+			); break;
 		};
 
 		return FALSE;
