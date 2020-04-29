@@ -39,6 +39,11 @@ namespace xui {
 		template < typename tTy , typename... tRest >
 		concept iSqrable_variadic_operation =
 			requires ( tTy n , tRest... q ) { sqrof ( n , q... ); };
+
+		// Does contain a begin and end location.
+		template < typename... tRest , typename sSz >
+		concept iDoes_contain_begin_end = 
+			requires ( tRest... rest , sSz n ) { sizeof... ( tRest ) == n * 2; };
 	}; // !!! concepts
 
 	namespace math {
@@ -75,6 +80,23 @@ namespace xui {
 				return for_impl ( other , operation , ++i );
 			};
 
+			// For all plausible elements.
+			template < std::size_t stSz , typename tFunc >
+			auto for_until_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) const {
+				const auto min_size = std::min ( tSz - 1 , stSz - 1 );
+
+				// Failed operation.
+				if ( !operation ( m_Elems [ i ] , other [ i ] ) )
+					return false;
+
+				// Met maximum index.
+				if ( i >= min_size )
+					return true;
+
+				// Recursion.
+				return for_until_impl ( other , operation , ++i );
+			};
+
 			// Get length of m_Elems.
 			template < std::size_t... tIns >
 			auto length_impl ( std::index_sequence < tIns... > ) {
@@ -104,7 +126,7 @@ namespace xui {
 		// --
 
 		template < typename stTy >
-		auto& operator + ( const stTy right ) {
+		auto& operator + ( const stTy right ) const {
 			// return vec.
 			auto Return_vec { *this };
 
@@ -116,7 +138,7 @@ namespace xui {
 		};
 
 		template < typename stTy >
-		auto& operator - ( const stTy right ) {
+		auto& operator - ( const stTy right ) const {
 			// return vec.
 			auto Return_vec { *this };
 
@@ -128,7 +150,7 @@ namespace xui {
 		};
 
 		template < typename stTy >
-		auto& operator * ( const stTy right ) {
+		auto& operator * ( const stTy right ) const {
 			// return vec.
 			auto Return_vec { *this };
 
@@ -190,6 +212,13 @@ namespace xui {
 			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n = q; } );
 		};
 
+		template < typename... tRest >
+		auto& operator () ( tRest... rest ) {
+			m_Elems = { rest... };
+
+			return *this;
+		};
+
 		template < std::size_t stSz >
 		auto& operator -= ( const xui::vector < stSz , tTy > right ) {
 			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n -= q; } );
@@ -210,12 +239,60 @@ namespace xui {
 			return for_impl ( right , [ ] ( tTy& n , const tTy q ) { return n *= q; } );
 		};
 
+		// Is greater than.
+		template < std::size_t stSz >
+		auto operator > ( const xui::vector < stSz , tTy > right ) const {
+			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n > q; } );
+		};
+
+		// Is less than.
+		template < std::size_t stSz >
+		auto operator < ( const xui::vector < stSz , tTy > right ) const {
+			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n < q; } );
+		};
+
+		// Is greater than or equal to.
+		template < std::size_t stSz >
+		auto operator >= ( const xui::vector < stSz , tTy > right ) const {
+			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n >= q; } );
+		};
+
+		// Is less than or equal to.
+		template < std::size_t stSz >
+		auto operator <= ( const xui::vector < stSz , tTy > right ) const {
+			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n <= q; } );
+		};
+
+		// Is equal to.
+		template < std::size_t stSz >
+		auto operator == ( const xui::vector < stSz , tTy > right ) const {
+			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n == q; } );
+		};
+
+		// Isn't equal to.
+		template < std::size_t stSz >
+		auto operator != ( const xui::vector < stSz , tTy > right ) const {
+			return for_until_impl ( right , [ ] ( const tTy n , const tTy q ) { return  n != q; } );
+		};
+
 		// --
 
 			// Get length of vector of size 'stSz'.
 		template < std::size_t stSz = tSz >
-		auto length ( void ) {
+		auto length ( void ) const {
 			return length_impl ( std::make_index_sequence < stSz > ( ) );
+		};
+
+		// Is inside boundaries of a begin point and designated size.
+		bool inside ( const xui::vector < tSz , tTy > begin , const xui::vector < tSz , tTy > size ) const {
+			// initialize to start point.
+			auto end { begin };
+			
+			// Get to the end point.
+			end += size;
+
+			// Is inside of begin and end.
+			return ( *this >= begin ) && ( *this <= end );
 		};
 	};
 

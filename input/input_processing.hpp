@@ -3,28 +3,33 @@
 #ifndef xui_distrubution
 
 namespace xui {
+	// Key activities.
+	enum key_activity : std::uint8_t {
+		// Key initial release.
+		KEY_ACTIVITY_RELEASE = 0U ,
+		// Key initial press.
+		KEY_ACTIVITY_PRESS ,
+		// Key is held.
+		KEY_ACTIVITY_HELD
+	};
+
 	// Input command for recursion.
 	struct input_command {
 		// Key bitset.
 		using key_bitset = std::bitset < 256 >;
 
-		enum key_activity : std::uint8_t {
-			KEY_ACTIVITY_RELEASE ,
-			KEY_ACTIVITY_PRESSED ,
-			KEY_ACTIVITY_OTHER
-		};
-
 		struct {
 			// Currently scrolled amount.
-			std::int32_t m_scroll;
+			std::int16_t m_Scroll;
 
 			// Mouse location on screen.
-			xui::vector_2d <> m_location;
-		} m_Mouse;
+			xui::vector_2d <> m_Location;
+		} mouse;
 
 		// Construction.
-		input_command ( key_bitset* key_ptr ) : m_Keys_ptr { key_ptr } , m_Keys_action { } , m_Mouse { 0 , { 0U , 0U } } { };
+		input_command ( key_bitset* key_ptr ) : m_Keys_ptr { key_ptr } , m_Keys_action { } , mouse { 0 , { 0U , 0U } } { };
 		~input_command ( void ) = default;
+
 
 		// Action keys.
 		key_bitset m_Keys_action;
@@ -32,19 +37,29 @@ namespace xui {
 		// Pointer to actively held keys.
 		key_bitset* m_Keys_ptr;
 
+		// Get mouse location.
+		const auto& mouse_location ( void ) const {
+			return mouse.m_Location;
+		};
+
+		// Mouse scroll amount.
+		const auto& mouse_scroll ( void ) const {
+			return mouse.m_Scroll;
+		};
+
 		template < key_activity tActivity >
 		auto key_in ( std::size_t i ) {
 			// Is key in release activity.
 			if ( tActivity == KEY_ACTIVITY_RELEASE )
 				return !m_Keys_ptr->test ( i ) && m_Keys_action.test ( i );
 
-			// Is key in release activity.
-			if ( tActivity == KEY_ACTIVITY_PRESSED )
+			// Is key in press activity.
+			if ( tActivity == KEY_ACTIVITY_PRESS )
 				return m_Keys_ptr->test ( i ) && m_Keys_action.test ( i );
 
-			// Is key in it's own special activity ( e.g. scroll ).
-			if ( tActivity == KEY_ACTIVITY_OTHER )
-				return m_Keys_action.test ( i );
+			// Is the key held.
+			if ( tActivity == KEY_ACTIVITY_HELD )
+				return m_Keys_ptr->test ( i );
 
 			return false;
 		};
@@ -61,6 +76,7 @@ namespace xui {
 			// Original window Wndproc.
 			WNDPROC m_Wndproc;
 
+			HWND m_Hwnd;
 		public:
 			// Get m_Wndproc.
 			const WNDPROC& wndproc ( void ) const {
