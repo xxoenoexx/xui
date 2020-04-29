@@ -60,7 +60,7 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 	xui::input_command command ( &m_Keys );
 
 	// Add a new key to the held ptr.
-	static auto add_key = [ ] ( xui::input_command command , std::uint16_t virtual_key ) {
+	static auto add_key = [ ] ( xui::input_command& command , std::uint16_t virtual_key ) {
 		// Test if actively held.
 		if ( command.m_Keys_ptr->test ( virtual_key ) )
 			return;
@@ -73,7 +73,7 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 	};
 
 	// Add a new key to the held ptr.
-	static auto remove_key = [ ] ( xui::input_command command , std::uint16_t virtual_key ) {
+	static auto remove_key = [ ] ( xui::input_command& command , std::uint16_t virtual_key ) {
 		// Test if actively held.
 		if ( !command.m_Keys_ptr->test ( virtual_key ) )
 			return;
