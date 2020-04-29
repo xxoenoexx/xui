@@ -37,7 +37,7 @@ auto xui::details::input_distributor::distribute ( xui::input_command& command )
 
 		// Disable other forms while another form is active. 
 		if ( !xui::g_Api->m_Active_ptr && next->m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
-			next->m_Flags.set ( xui::OBJECT_FLAG_DISABLED , FALSE );
+			next->m_Flags.flip ( xui::OBJECT_FLAG_DISABLED );
 
 		// Run input against command.
 		next->input ( command );
