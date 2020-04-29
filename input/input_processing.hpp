@@ -1,6 +1,7 @@
 #pragma once
 
 #ifndef xui_distrubution
+#define xui_distrubution
 
 namespace xui {
 	// Key activities.
@@ -50,16 +51,17 @@ namespace xui {
 		template < key_activity tActivity >
 		auto key_in ( std::size_t i ) {
 			// Is key in release activity.
-			if ( tActivity == KEY_ACTIVITY_RELEASE )
+			if constexpr ( tActivity == KEY_ACTIVITY_RELEASE )
 				return !m_Keys_ptr->test ( i ) && m_Keys_action.test ( i );
 
 			// Is key in press activity.
-			if ( tActivity == KEY_ACTIVITY_PRESS )
+			if constexpr ( tActivity == KEY_ACTIVITY_PRESS )
 				return m_Keys_ptr->test ( i ) && m_Keys_action.test ( i );
 
 			// Is the key held.
-			if ( tActivity == KEY_ACTIVITY_HELD )
+			if constexpr ( tActivity == KEY_ACTIVITY_HELD )
 				return m_Keys_ptr->test ( i );
+
 
 			return false;
 		};
@@ -73,9 +75,10 @@ namespace xui {
 			// Actively held keys.
 			input_command::key_bitset m_Keys;
 
-			// Original window Wndproc.
+			// Original window proc.
 			WNDPROC m_Wndproc;
 
+			// Window.
 			HWND m_Hwnd;
 		public:
 			// Get m_Wndproc.
@@ -96,8 +99,6 @@ namespace xui {
 			auto distribute ( xui::input_command& );
 		};
 	}; // !!! details
-
-	extern std::unique_ptr < details::input_distributor > input_distribution;
 }; // !!! xui
 
 #endif // !!! xui_distrubution

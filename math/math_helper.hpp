@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef xui_math_helper
+#define xui_math_helper
+
 namespace xui {
 	namespace math {
 		// Accumulation of tTy.
@@ -39,11 +42,6 @@ namespace xui {
 		template < typename tTy , typename... tRest >
 		concept iSqrable_variadic_operation =
 			requires ( tTy n , tRest... q ) { sqrof ( n , q... ); };
-
-		// Does contain a begin and end location.
-		template < typename... tRest , typename sSz >
-		concept iDoes_contain_begin_end = 
-			requires ( tRest... rest , sSz n ) { sizeof... ( tRest ) == n * 2; };
 	}; // !!! concepts
 
 	namespace math {
@@ -68,7 +66,7 @@ namespace xui {
 		// For all plausible elements.
 		template < std::size_t stSz , typename tFunc >
 			auto& for_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) {
-				const auto min_size = std::min ( tSz - 1 , stSz - 1 );
+				constexpr auto min_size = std::min ( tSz - 1 , stSz - 1 );
 				
 				// Operation.
 				operation ( m_Elems [ i ] , other [ i ] );
@@ -83,7 +81,7 @@ namespace xui {
 			// For all plausible elements.
 			template < std::size_t stSz , typename tFunc >
 			auto for_until_impl ( xui::vector < stSz , tTy > other , tFunc operation , std::size_t i = 0 ) const {
-				const auto min_size = std::min ( tSz - 1 , stSz - 1 );
+				constexpr auto min_size = std::min ( tSz - 1 , stSz - 1 );
 
 				// Failed operation.
 				if ( !operation ( m_Elems [ i ] , other [ i ] ) )
@@ -300,3 +298,5 @@ namespace xui {
 	template < typename tTy = unsigned int >
 	using vector_2d = xui::vector < 2 , tTy >;
 }; // !!! xui
+
+#endif // !!! xui_math_helper

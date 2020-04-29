@@ -1,27 +1,54 @@
-
 #include <xui/xui.hpp>
 
 // Wndproc implementation.
 LRESULT _stdcall wndproc_impl ( HWND hwnd , UINT msg , WPARAM wparam , LPARAM lparam ) {
 	// XUI input processing.
-	if ( xui::input_distribution->process ( hwnd , msg , wparam , lparam ) )
+	if ( xui::g_Api->input_distribution ( )->process ( hwnd , msg , wparam , lparam ) )
 		return TRUE;
 
 	// Return original wndproc.
-	return CallWindowProcA ( xui::input_distribution->wndproc ( ) , hwnd , msg , wparam , lparam );
+	return CallWindowProcA ( xui::g_Api->input_distribution ( )->wndproc ( ) , hwnd , msg , wparam , lparam );
+};
+
+// Construction.
+xui::details::input_distributor::input_distributor ( HWND hwnd ) : m_Hwnd { hwnd } {
+	// Get wndproc.
+	m_Wndproc = reinterpret_cast < WNDPROC > ( SetWindowLongA ( m_Hwnd , GWLP_WNDPROC , reinterpret_cast < LONG > ( wndproc_impl ) ) );
+};
+
+// Deconstruction.
+xui::details::input_distributor::~input_distributor ( void ) {
+	// Reset wndproc.
+	SetWindowLongA ( m_Hwnd , GWLP_WNDPROC , reinterpret_cast < LONG > ( m_Wndproc ) );
 };
 
 // distribution of input command.
 auto xui::details::input_distributor::distribute ( xui::input_command& command ) {
+	bool cogitation { false };
 
-	command.key_in < xui::KEY_ACTIVITY_HELD > ( VK_INSERT ); // Held.
-	command.key_in < xui::KEY_ACTIVITY_RELEASE > ( VK_INSERT ); // Released.
-	command.key_in < xui::KEY_ACTIVITY_PRESS > ( VK_INSERT ); // Pressed.
+	for ( auto& next : xui::g_Api->m_Forms ) {
+		// Set api ptr.
+		if ( !next->m_Api_ptr )
+			next->m_Api_ptr = xui::g_Api.get ( );
 
-	command.mouse_location ( ).inside ( { 15U , 15U } , { 15U , 15U } );
+		// Set disabled flag.
+		if ( xui::g_Api->m_Active_ptr && xui::g_Api->m_Active_ptr != next.get ( ) )
+			next->m_Flags.set ( xui::OBJECT_FLAG_DISABLED , TRUE );
+
+		// Disable other forms while another form is active. 
+		if ( !xui::g_Api->m_Active_ptr && next->m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
+			next->m_Flags.set ( xui::OBJECT_FLAG_DISABLED , FALSE );
+
+		// Run input against command.
+		next->input ( command );
+
+		// Don't call original wndproc; we have a form handling it.
+		if ( next->m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) && !cogitation )
+			cogitation = TRUE;
+	};
 
 	// Successfully distributed input.
-	return true;
+	return cogitation;
 };
 
 // Process.
@@ -86,8 +113,8 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 	default:
 		/// Update mouse location.
 		if ( msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST ) {
-			command.mouse.m_Location (	static_cast < std::uint32_t > ( LOWORD ( lparam ) ) ,	// X location.
-										static_cast < std::uint32_t > ( HIWORD ( lparam ) ) );	// Y Location.
+			command.mouse.m_Location (	static_cast < std::uint32_t > ( LOWORD ( lparam ) ) ,
+										static_cast < std::uint32_t > ( HIWORD ( lparam ) ) );
 			break;
 		};
 
@@ -96,16 +123,4 @@ bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wp
 
 	// Distribute input.
 	return distribute ( command );
-};
-
-// Construction.
-xui::details::input_distributor::input_distributor ( HWND hwnd ) : m_Hwnd { hwnd } {
-	// Get wndproc.
-	m_Wndproc = reinterpret_cast < WNDPROC > ( SetWindowLongA ( hwnd , GWLP_WNDPROC , reinterpret_cast < LONG > ( wndproc_impl ) ) );
-};
-
-// Deconstruction.
-xui::details::input_distributor::~input_distributor ( void ) {
-	// Reset wndproc.
-	SetWindowLongA ( m_Hwnd , GWLP_WNDPROC , reinterpret_cast < LONG > ( m_Wndproc ) );
 };

@@ -11,7 +11,6 @@
 #include <cstddef>
 #include <array>
 #include <functional>
-#include <ranges>
 #include <bitset>
 #include <concepts>
 #include <iostream>
@@ -21,4 +20,5 @@
 #define xui_inc
 #include <xui/math/math_helper.hpp>
 #include <xui/input/input_processing.hpp>
+#include <xui/api/xui_api.hpp>
 #endif // !!! xui_inc
