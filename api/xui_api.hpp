@@ -12,26 +12,22 @@
 #include <xui/api/objects/xui_object_slider.hpp>
 
 namespace xui {
-	// Objects that are dependent on this object.
-	template < typename tTy >
-	using dependency_vector = std::vector < std::unique_ptr < tTy > >;
-
 	namespace details {
 		class api_director : public base_api {
 		private:
-			// Forms.
-			dependency_vector < xui::object_base > m_Forms;
+			// Children objects unique ptrs.
+			xui::dependency_vector < xui::object_base > m_Children_ptrs;
 
 			// Input distribution.
-			std::unique_ptr < xui::details::input_distributor > m_Input_distribution_ptr;
+			std::unique_ptr < xui::details::input_distribution > m_Input_distribution_ptr;
 
 			// Friendship between Api and Input distribution.
-			friend class xui::details::input_distributor;
+			friend class xui::details::input_distribution;
 		public:
 			// Constructor.
 			api_director ( HWND hwnd ) : base_api ( ) { 
 				// Setup input distribution.
-				m_Input_distribution_ptr = std::make_unique < xui::details::input_distributor > ( hwnd );
+				m_Input_distribution_ptr = std::make_unique < xui::details::input_distribution > ( hwnd );
 			};
 
 			// Get input distribution.

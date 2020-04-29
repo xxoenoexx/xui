@@ -2,6 +2,10 @@
 #define xui_api_object_base
 
 namespace xui {
+	// Objects that are dependent on this object.
+	template < typename tTy >
+	using dependency_vector = std::vector < std::unique_ptr < tTy > >;
+
 	// Object flag markers.
 	enum object_flags {
 		// Is disabled by parent.

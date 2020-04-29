@@ -14,39 +14,43 @@ LRESULT _stdcall wndproc_impl ( HWND hwnd , UINT msg , WPARAM wparam , LPARAM lp
 };
 
 // Construction.
-xui::details::input_distributor::input_distributor ( HWND hwnd ) : m_Hwnd { hwnd } {
+xui::details::input_distribution::input_distribution ( HWND hwnd ) : m_Hwnd { hwnd } {
 	// Get wndproc.
 	m_Wndproc = reinterpret_cast < WNDPROC > ( SetWindowLongA ( m_Hwnd , GWLP_WNDPROC , reinterpret_cast < LONG > ( wndproc_impl ) ) );
 };
 
 // Deconstruction.
-xui::details::input_distributor::~input_distributor ( void ) {
+xui::details::input_distribution::~input_distribution ( void ) {
 	// Reset wndproc.
 	SetWindowLongA ( m_Hwnd , GWLP_WNDPROC , reinterpret_cast < LONG > ( m_Wndproc ) );
 };
 
 // distribution of input command.
-auto xui::details::input_distributor::distribute ( xui::input_command& command ) {
+auto xui::details::input_distribution::distribute ( xui::input_command& command ) {
 	bool cogitation { false };
 
-	for ( auto& next : xui::g_Api->m_Forms ) {
+	// Has no children.
+	if ( xui::g_Api->m_Children_ptrs.empty ( ) )
+		return cogitation;
+
+	for ( auto& next_child : xui::g_Api->m_Children_ptrs ) {
 		// Set api ptr.
-		if ( !next->m_Api_ptr )
-			next->m_Api_ptr = xui::g_Api.get ( );
+		if ( !next_child->m_Api_ptr )
+			next_child->m_Api_ptr = xui::g_Api.get ( );
 
 		// Disable other objects while one has taken focus.
-		if ( xui::g_Api->m_Active_ptr && xui::g_Api->m_Active_ptr != next.get ( ) )
-			next->m_Flags.set ( xui::OBJECT_FLAG_DISABLED , TRUE );
+		if ( xui::g_Api->m_Focused_ptr && xui::g_Api->m_Focused_ptr != next_child.get ( ) )
+			next_child->m_Flags.set ( xui::OBJECT_FLAG_DISABLED , TRUE );
 
 		// Re-enable objects that were formerly disabled.
-		if ( !xui::g_Api->m_Active_ptr && next->m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
-			next->m_Flags.flip ( xui::OBJECT_FLAG_DISABLED );
+		if ( !xui::g_Api->m_Focused_ptr && next_child->m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
+			next_child->m_Flags.flip ( xui::OBJECT_FLAG_DISABLED );
 
 		// Run objects input against command.
-		next->input ( command );
+		next_child->input ( command );
 
 		// An object was able to process the command.
-		if ( next->m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) && !cogitation )
+		if ( next_child->m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) && !cogitation )
 			cogitation = true;
 	};
 
@@ -55,7 +59,7 @@ auto xui::details::input_distributor::distribute ( xui::input_command& command )
 };
 
 // Process.
-bool xui::details::input_distributor::process ( HWND hwnd , UINT msg , WPARAM wparam , LPARAM lparam ) {
+bool xui::details::input_distribution::process ( HWND hwnd , UINT msg , WPARAM wparam , LPARAM lparam ) {
 	// Create new command.
 	xui::input_command command ( &m_Keys );
 

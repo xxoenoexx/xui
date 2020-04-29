@@ -7,20 +7,21 @@ namespace xui {
 	namespace details {
 		class base_api {
 		protected:
-			// Currently active object.
-			object_base* m_Active_ptr;
+			// Actively focused child object.
+			xui::object_base* m_Focused_ptr;
 
-			friend input_distributor;
+			// Define friendship between Base Api and Input Distribution.
+			friend xui::details::input_distribution;
 		public:
 			// Constructor.
-			base_api ( void ) : m_Active_ptr { } { };
+			base_api ( void ) : m_Focused_ptr { } { };
 
 			// Deconstructor.
 			~base_api ( void ) = default;
 
 			// Get active ptr.
 			auto& active ( void ) {
-				return m_Active_ptr;
+				return m_Focused_ptr;
 			};
 		};
 	}; // !!! details

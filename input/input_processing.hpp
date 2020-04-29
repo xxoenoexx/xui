@@ -68,7 +68,7 @@ namespace xui {
 
 	namespace details {
 		// Process input and recursively distrubute.
-		class input_distributor {
+		class input_distribution {
 		private:
 			// Actively held keys.
 			input_command::key_bitset m_Keys;
@@ -85,10 +85,10 @@ namespace xui {
 			};
 
 			// Constructor.
-			input_distributor ( HWND );
+			input_distribution ( HWND );
 			
 			// Deconstructor.
-			~input_distributor ( void );
+			~input_distribution ( void );
 
 			// Process message.
 			bool process ( HWND , UINT , WPARAM , LPARAM );
