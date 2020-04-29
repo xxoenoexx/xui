@@ -1,5 +1,8 @@
 #include <xui/xui.hpp>
 
+// g_Api.
+std::unique_ptr < xui::details::api_director > xui::g_Api;
+
 // Wndproc implementation.
 LRESULT _stdcall wndproc_impl ( HWND hwnd , UINT msg , WPARAM wparam , LPARAM lparam ) {
 	// XUI input processing.
