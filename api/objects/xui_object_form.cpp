@@ -10,10 +10,22 @@ void xui::object_form::input ( xui::input_command& command ) {
 		m_Flags.flip ( xui::OBJECT_FLAG_COGITABLE );
 
 	// Object isn't cogitable.
-	if ( !m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) || 
+	if ( !m_Flags.test ( xui::OBJECT_FLAG_COGITABLE ) ||
 		// Object was disabled from interactions.
-		m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
+		m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) ) {
+	
+		// More than just the disabled flag is set.
+		if ( m_Flags.count ( ) > 1 ) {
+			// Reset all flags.
+			m_Flags.reset ( );
+
+			// Set disabled flag back on.
+			m_Flags.flip ( xui::OBJECT_FLAG_DISABLED );
+		};
+		
+		// Discontinue.
 		return;
+	};
 
 	// Set hovered flag.
 	m_Flags.set ( xui::OBJECT_FLAG_HOVERED ,

@@ -34,7 +34,7 @@ namespace xui {
 			// No object has focus.
 			return std::nullopt;
 		};
-	public:
+	protected:
 		// Sets parents focus on self.
 		template < typename tTy > requires std::is_pointer < tTy >::value
 		auto self_focus ( tTy& parent ) {
