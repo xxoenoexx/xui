@@ -20,7 +20,7 @@ namespace xui {
 			~base_api ( void ) = default;
 
 			// Get active ptr.
-			auto& active ( void ) {
+			auto& focused ( void ) {
 				return m_Focused_ptr;
 			};
 		};

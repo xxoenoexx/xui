@@ -24,7 +24,7 @@ namespace xui {
 		~object_form ( void ) = default;
 
 		// Process input for form.
-		virtual void input ( xui::input_command& command );
+		virtual void input ( xui::input_command& );
 
 		// Render form.
 		virtual void render ( void );

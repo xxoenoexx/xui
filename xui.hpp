@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <array>
 #include <functional>
+#include <optional>
 #include <ranges>
 #include <bitset>
 #include <concepts>

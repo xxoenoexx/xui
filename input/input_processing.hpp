@@ -53,15 +53,14 @@ namespace xui {
 				return !m_Keys_ptr->test ( i ) && m_Keys_action.test ( i );
 
 			// Is key in press activity.
-			if constexpr ( tActivity == KEY_ACTIVITY_PRESS )
+			else if constexpr ( tActivity == KEY_ACTIVITY_PRESS )
 				return m_Keys_ptr->test ( i ) && m_Keys_action.test ( i );
 
 			// Is the key held.
-			if constexpr ( tActivity == KEY_ACTIVITY_HELD )
+			else if constexpr ( tActivity == KEY_ACTIVITY_HELD )
 				return m_Keys_ptr->test ( i );
-
-
-			return false;
+			else
+				return false;
 		};
 	};
 	

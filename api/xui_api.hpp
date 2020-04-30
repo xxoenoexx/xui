@@ -13,7 +13,7 @@
 
 namespace xui {
 	namespace details {
-		class api_director : public base_api {
+		class global_api : public base_api {
 		private:
 			// Children objects unique ptrs.
 			xui::dependency_vector < xui::object_base > m_Children_ptrs;
@@ -25,7 +25,7 @@ namespace xui {
 			friend class xui::details::input_distribution;
 		public:
 			// Constructor.
-			api_director ( HWND hwnd ) : base_api ( ) { 
+			global_api ( HWND hwnd ) : base_api ( ) { 
 				// Setup input distribution.
 				m_Input_distribution_ptr = std::make_unique < xui::details::input_distribution > ( hwnd );
 			};
@@ -36,15 +36,16 @@ namespace xui {
 			};
 
 			// Deconstructor.
-			~api_director ( void ) = default;
+			~global_api ( void ) = default;
 		};
 	}; // !!! details
 
 	// Api.
-	extern std::unique_ptr < details::api_director > g_Api;
+	extern std::unique_ptr < details::global_api > g_Api;
 };
 
-// Initializex xui::g_Api.
-#define INIT_XUI( n ) xui::g_Api = std::make_unique < xui::details::api_director > ( n );
+
+// Initializes xui::g_Api and it's core components.
+#define XUI_INIT( n ) xui::g_Api = std::make_unique < xui::details::global_api > ( n );
 
 #endif // !!! xui_api

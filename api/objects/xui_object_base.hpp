@@ -3,7 +3,7 @@
 
 namespace xui {
 	// Objects that are dependent on this object.
-	template < typename tTy >
+	template < typename tTy > requires std::is_class < tTy >::value
 	using dependency_vector = std::vector < std::unique_ptr < tTy > >;
 
 	// Object flag markers.
@@ -16,11 +16,42 @@ namespace xui {
 		OBJECT_FLAG_HOVERED ,
 		// Is in interaction.
 		OBJECT_FLAG_INTERACTION ,
-		// Is able to process input.
+		// Is able to use the command,
+		// serves more as an 'is awake' flag.
 		OBJECT_FLAG_COGITABLE
 	};
 
 	class object_base {
+	private:
+		// Is this object focused.
+		template < typename tTy > requires std::is_pointer < tTy >::value
+		std::optional < bool > any_focus ( tTy& parent ) const {
+			// Is there an actively focused object.
+			if ( parent->focused ( ) )
+				// Is this object focused.
+				return m_Api_ptr->focused ( ) == this;
+
+			// No object has focus.
+			return std::nullopt;
+		};
+	public:
+		// Sets parents focus on self.
+		template < typename tTy > requires std::is_pointer < tTy >::value
+		auto self_focus ( tTy& parent ) {
+			// No object has focus.
+			if ( auto focus = any_focus ( parent ); !focus.has_value ( ) )
+				// Set self to focus.
+				parent->focused ( ) = this;
+		};
+
+		// Sets parents focus on self.
+		template < typename tTy > requires std::is_pointer < tTy >::value
+		auto self_unfocus ( tTy& parent ) {
+			// Ensure we're the object that's focused.
+			if ( auto focus = any_focus ( parent ); focus.has_value ( ) && *focus )
+				// Empty focus object.
+				parent->focused ( ) = { };
+		};
 	public:
 		// Constructor.
 		object_base ( xui::vector_2d <> location , xui::vector_2d <> size ) : m_Location { location } , m_Size { size } { };

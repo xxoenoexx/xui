@@ -1,7 +1,7 @@
 #include <xui/xui.hpp>
 
 // g_Api.
-std::unique_ptr < xui::details::api_director > xui::g_Api;
+std::unique_ptr < xui::details::global_api > xui::g_Api;
 
 // Wndproc implementation.
 LRESULT _stdcall wndproc_impl ( HWND hwnd , UINT msg , WPARAM wparam , LPARAM lparam ) {
@@ -28,6 +28,8 @@ xui::details::input_distribution::~input_distribution ( void ) {
 // distribution of input command.
 auto xui::details::input_distribution::distribute ( xui::input_command& command ) {
 	bool cogitation { false };
+
+	if ( command.key_in < xui::KEY_ACTIVITY_HELD > ( VK_INSERT ) );
 
 	// Has no children.
 	if ( xui::g_Api->m_Children_ptrs.empty ( ) )
