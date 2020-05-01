@@ -1,7 +1,7 @@
 #include <xui/xui.hpp>
 
-// Header height.
-static constexpr auto g_Header_height = 21U;
+// Height of header for form object.
+static constexpr auto g_Header_height = 30U;
 
 // Run command against form object input.
 void xui::object_form::input ( xui::input_command& command ) {
@@ -95,12 +95,16 @@ void xui::object_form::input ( xui::input_command& command ) {
 		if ( !m_Focused_ptr && next_child->m_Flags.test ( xui::OBJECT_FLAG_DISABLED ) )
 			next_child->m_Flags.flip ( xui::OBJECT_FLAG_DISABLED );
 
-		// Run child input against command.
+		// Run objects input against command.
 		next_child->input ( command );
 	};
 };
 
 // Render form object.
 void xui::object_form::render ( void ) {
+	/*
+	
+	...Render...
 
+	*/
 };

@@ -10,9 +10,9 @@
 #include <array>
 #include <functional>
 #include <optional>
+#include <concepts>
 #include <ranges>
 #include <bitset>
-#include <concepts>
 #include <iostream>
 #endif // !!! cxx_inc
 

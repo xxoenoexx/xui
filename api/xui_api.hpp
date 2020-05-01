@@ -24,6 +24,9 @@ namespace xui {
 			// Friendship between Api and Input distribution.
 			friend class xui::details::input_distribution;
 		public:
+			// Deconstructor.
+			~global_api ( void ) = default;
+
 			// Constructor.
 			global_api ( HWND hwnd ) : base_api ( ) { 
 				// Setup input distribution.
@@ -34,18 +37,21 @@ namespace xui {
 			auto input_distribution ( void ) {
 				return m_Input_distribution_ptr.get ( );
 			};
-
-			// Deconstructor.
-			~global_api ( void ) = default;
 		};
 	}; // !!! details
 
 	// Api.
 	extern std::unique_ptr < details::global_api > g_Api;
-};
 
+	// Initialize xui api and core components.
+	template < typename tCompound > requires std::is_compound < tCompound >::value
+	static auto init ( HWND n , tCompound operation ) {
 
-// Initializes xui::g_Api and it's core components.
-#define XUI_INIT( n ) xui::g_Api = std::make_unique < xui::details::global_api > ( n );
+		xui::g_Api = std::make_unique < xui::details::global_api > ( n );
+
+		// Populate.
+		operation ( );
+	};
+}; // !!! xui
 
 #endif // !!! xui_api
