@@ -33,7 +33,7 @@ namespace xui {
 			// Is there an actively focused object.
 			if ( parent->focused ( ) )
 				// Is this object focused.
-				return m_Api_ptr->focused ( ) == this;
+				return parent->focused ( ) == this;
 
 			// No object has focus.
 			return std::nullopt;
@@ -58,7 +58,8 @@ namespace xui {
 		};
 	public:
 		// Constructor.
-		object_base ( xui::vector_2d <> location , xui::vector_2d <> size ) : m_Location { location } , m_Size { size } { };
+		object_base ( xui::vector_2d <> location , xui::vector_2d <> size ) 
+					: m_Location { location } , m_Size { size } { };
 
 		// Default constructor.
 		object_base ( void ) : m_Location { } , m_Size { } { };
@@ -83,7 +84,7 @@ namespace xui {
 	};
 
 	// Marks that an object is an immediate child of tTy.
-	template < typename tTy >
+	template < typename tTy > requires std::is_class < tTy >::value
 	class immediate_child_of : public xui::object_base {
 	public:
 		// Parent.

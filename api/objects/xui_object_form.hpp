@@ -18,17 +18,23 @@ namespace xui {
 	public:
 		// Constructor.
 		object_form ( std::string title , xui::vector_2d <> size , xui::vector_2d <> location ) 
-					: xui::object_base ( location , size ) , m_Title { title } , m_Previous_mouse_location { } { };
+					: xui::object_base ( location , size ) , m_Title { title } ,
+					m_Focused_ptr { } , m_Previous_mouse_location { } { };
+
+		// Deconstructor.
+		~object_form ( void ) = default;
 
 		// Add child to form.
-		template < typename tTy > requires 
-			std::is_base_of < xui::immediate_child_of < xui::object_form > , tTy >::value
+		template < typename tTy > 
+		requires std::is_base_of < xui::immediate_child_of < xui::object_form > , tTy >::value
 			auto add_child ( xui::unique_object_ptr < tTy > object ) {
 			m_Children_ptrs.push_back ( std::move ( object ) );
 		};
 
-		// Deconstructor.
-		~object_form ( void ) = default;
+		// Get active ptr.
+		auto& focused ( void ) {
+			return m_Focused_ptr;
+		};
 
 		// Process input for form.
 		virtual void input ( xui::input_command& );

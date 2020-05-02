@@ -29,8 +29,6 @@ xui::details::input_distribution::~input_distribution ( void ) {
 auto xui::details::input_distribution::distribute ( xui::input_command& command ) {
 	bool cogitation { false };
 
-	if ( command.key_in < xui::KEY_ACTIVITY_HELD > ( VK_INSERT ) );
-
 	// Has no children.
 	if ( xui::g_Api->m_Children_ptrs.empty ( ) )
 		return cogitation;

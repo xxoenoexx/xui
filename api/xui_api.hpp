@@ -39,7 +39,8 @@ namespace xui {
 				return m_Input_distribution_ptr.get ( );
 			};
 
-			void add_form ( std::unique_ptr < xui::object_form > form ) {
+			// Adds form to api.
+			auto add_form ( std::unique_ptr < xui::object_form > form ) {
 				m_Children_ptrs.push_back ( std::move ( form ) );
 			};
 		};
@@ -48,7 +49,7 @@ namespace xui {
 	// Api.
 	extern std::unique_ptr < details::global_api > g_Api;
 
-	// Add form to api.
+	// Add form to Api.
 	static auto end_form ( std::unique_ptr < xui::object_form > form ) {
 		xui::g_Api->add_form ( std::move ( form ) );
 	};
