@@ -57,7 +57,6 @@ void xui::object_form::input ( xui::input_command& command ) {
 		m_Flags.flip ( xui::OBJECT_FLAG_INTERACTION );
 	};
 
-
 	// Update location drag.
 	if ( m_Flags.test ( xui::OBJECT_FLAG_INTERACTION ) ) {
 		auto next_location { m_Location };

@@ -14,11 +14,18 @@ namespace xui {
 		xui::vector_2d <> m_Previous_mouse_location;
 
 		// Children objects unique ptrs.
-		xui::dependency_vector < xui::object_base > m_Children_ptrs;
+		xui::immediate_children_vector < xui::object_form > m_Children_ptrs;
 	public:
 		// Constructor.
-		object_form ( std::string title , xui::vector_2d <> size , xui::vector_2d <> location = { 150U , 250U } ) 
+		object_form ( std::string title , xui::vector_2d <> size , xui::vector_2d <> location ) 
 					: xui::object_base ( location , size ) , m_Title { title } , m_Previous_mouse_location { } { };
+
+		// Add child to form.
+		template < typename tTy > requires 
+			std::is_base_of < xui::immediate_child_of < xui::object_form > , tTy >::value
+			auto add_child ( xui::unique_object_ptr < tTy > object ) {
+			m_Children_ptrs.push_back ( std::move ( object ) );
+		};
 
 		// Deconstructor.
 		~object_form ( void ) = default;
@@ -28,6 +35,12 @@ namespace xui {
 
 		// Render form.
 		virtual void render ( void );
+	};
+
+	// Makes a unique pointer to a form object.
+	static auto begin_form ( std::string title , xui::vector_2d <> size , xui::vector_2d <> location = { 150U , 250U } ) {
+		// Make and return.
+		return std::make_unique < xui::object_form > ( title , size , location );
 	};
 }; // !!! xui
 

@@ -2,9 +2,13 @@
 #define xui_api_object_base
 
 namespace xui {
-	// Objects that are dependent on this object.
-	template < typename tTy > requires std::is_class < tTy >::value
-	using dependency_vector = std::vector < std::unique_ptr < tTy > >;
+	// Wrapper for unique_ptr that requires tTy to be a class.
+	template < typename tTy = xui::object_base > requires std::is_class < tTy >::value
+	using unique_object_ptr = std::unique_ptr < tTy >;
+
+	// Any child type vector.
+	template < typename tTy = xui::object_base >
+	using child_vector = std::vector < unique_object_ptr < tTy > >;
 
 	// Object flag markers.
 	enum object_flags {
@@ -56,6 +60,9 @@ namespace xui {
 		// Constructor.
 		object_base ( xui::vector_2d <> location , xui::vector_2d <> size ) : m_Location { location } , m_Size { size } { };
 
+		// Default constructor.
+		object_base ( void ) : m_Location { } , m_Size { } { };
+
 		// Deconstructor.
 		~object_base ( void ) = default;
 
@@ -64,9 +71,6 @@ namespace xui {
 
 		// Object active flags.
 		std::bitset < 5 > m_Flags;
-
-		// Parent.
-		xui::object_base* m_Parent_ptr;
 
 		// Api.
 		xui::details::base_api* m_Api_ptr;
@@ -77,6 +81,22 @@ namespace xui {
 		// Render object.
 		virtual void render ( void ) = 0;
 	};
+
+	// Marks that an object is an immediate child of tTy.
+	template < typename tTy >
+	class immediate_child_of : public xui::object_base {
+	public:
+		// Parent.
+		tTy* m_Parent_ptr;
+
+		// Constructor/deconstructor.
+		immediate_child_of ( void ) { };
+		~immediate_child_of ( void ) = default;
+	};
+
+	// Only allows children that are immediate to tTy.
+	template < typename tTy = xui::object_base >
+	using immediate_children_vector = child_vector < xui::immediate_child_of < tTy > >;
 }; // !!! xui
 
 
