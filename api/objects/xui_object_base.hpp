@@ -7,7 +7,7 @@ namespace xui {
 	using unique_object_ptr = std::unique_ptr < tTy >;
 
 	// Any child type vector.
-	template < typename tTy = xui::object_base >
+	template < typename tTy >
 	using child_vector = std::vector < unique_object_ptr < tTy > >;
 
 	// Object flag markers.
@@ -26,10 +26,10 @@ namespace xui {
 	};
 
 	class object_base {
-	private:
+	protected:
 		// Is this object focused.
 		template < typename tTy > requires std::is_pointer < tTy >::value
-		std::optional < bool > any_focus ( tTy& parent ) const {
+			std::optional < bool > any_focus ( tTy& parent ) const {
 			// Is there an actively focused object.
 			if ( parent->focused ( ) )
 				// Is this object focused.
@@ -38,7 +38,7 @@ namespace xui {
 			// No object has focus.
 			return std::nullopt;
 		};
-	protected:
+
 		// Sets parents focus on self.
 		template < typename tTy > requires std::is_pointer < tTy >::value
 		auto self_focus ( tTy& parent ) {
@@ -90,15 +90,42 @@ namespace xui {
 		// Parent.
 		tTy* m_Parent_ptr;
 
+		immediate_child_of ( xui::vector_2d <> size ) :
+			xui::object_base ( { }  , size ) { };
+
 		// Constructor/deconstructor.
-		immediate_child_of ( void ) { };
+		immediate_child_of ( void ) : xui::object_base ( ) { };
 		~immediate_child_of ( void ) = default;
 	};
 
 	// Only allows children that are immediate to tTy.
 	template < typename tTy = xui::object_base >
 	using immediate_children_vector = child_vector < xui::immediate_child_of < tTy > >;
-}; // !!! xui
 
+	template < typename tTy > requires std::is_class < tTy >::value
+	class immediate_parent {
+	protected:
+		// Actively focused child object.
+		xui::object_base* m_Focused_ptr;
+
+		// Children objects unique ptrs.
+		xui::immediate_children_vector < tTy > m_Children_ptrs;
+	public:
+		immediate_parent ( void ) : m_Focused_ptr { } { };
+		~immediate_parent ( void ) = default;
+
+		// Add child to tTy.
+		template < typename stTy >
+		requires std::is_base_of < xui::immediate_child_of < tTy > , stTy >::value
+			auto add_child ( xui::unique_object_ptr < stTy > object ) {
+			m_Children_ptrs.push_back ( std::move ( object ) );
+		};
+
+		// Get active ptr.
+		auto& focused ( void ) {
+			return m_Focused_ptr;
+		};
+	};
+}; // !!! xui
 
 #endif // !!! xui_api_object_base

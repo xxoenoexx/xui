@@ -295,4 +295,4 @@ namespace xui {
 	using vector_2d = xui::vector < 2 , tTy >;
 }; // !!! xui
 
-#endif // !!! xui_math_helper
+#endif // !!! xui_math_helper1

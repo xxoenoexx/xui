@@ -1,12 +1,9 @@
 #include <xui/xui.hpp>
 
-// Height of header for form object.
-static constexpr auto g_Header_height = 30U;
-
 // Run command against form object input.
 void xui::object_form::input ( xui::input_command& command ) {
 	// Flip cogitable status.
-	if ( command.key_in < xui::KEY_ACTIVITY_PRESS > ( VK_DELETE ) )
+	if ( command.key_in < xui::KEY_ACTIVITY_RELEASE > ( VK_DELETE ) )
 		m_Flags.flip ( xui::OBJECT_FLAG_COGITABLE );
 
 	// Object isn't cogitable.
@@ -18,43 +15,41 @@ void xui::object_form::input ( xui::input_command& command ) {
 		m_Flags.reset ( xui::OBJECT_FLAG_HOVERED );
 		m_Flags.reset ( xui::OBJECT_FLAG_INTERACTION );
 
-		// Discontinue.
 		return;
 	};
 
 	// Set hovered flag.
 	m_Flags.set ( xui::OBJECT_FLAG_HOVERED ,
 		// Is in header region.
-		command.mouse_location ( ).inside ( m_Location , { m_Size [ 0 ] , g_Header_height } ) ||
+		command.mouse_location ( ).inside ( m_Location , { m_Size [ 0 ] , m_Header_height } ) ||
 		// Is already in an interaction.
 		m_Flags.test ( xui::OBJECT_FLAG_INTERACTION ) );
 
 	// Mouse initial press in header area.
 	if ( command.key_in < xui::KEY_ACTIVITY_PRESS > ( VK_LBUTTON ) &&
-		m_Flags.test ( xui::OBJECT_FLAG_HOVERED ) ) {
+		m_Flags.test ( xui::OBJECT_FLAG_HOVERED ) && 
+		!m_Flags.test ( xui::OBJECT_FLAG_INTERACTION ) ) {
 		// Set current mouse location.
 		m_Previous_mouse_location = command.mouse_location ( );
 
-		// Set interaction flag.
-		if ( !m_Flags.test ( xui::OBJECT_FLAG_INTERACTION ) ) {
-			m_Flags.flip ( xui::OBJECT_FLAG_INTERACTION );
+		// Focus self to Api.
+		self_focus ( m_Api_ptr );
 
-			// Focus self to parent.
-			// In this case the Api is the top most layer.
-			self_focus ( m_Api_ptr );
-		};
+		// Enable interaction flag
+		m_Flags.set ( xui::OBJECT_FLAG_INTERACTION );
 	};
 
 	// We've lost focus.
-	if ( command.key_in < xui::KEY_ACTIVITY_HELD > ( VK_LBUTTON ) &&
+	if ( command.key_in < xui::KEY_ACTIVITY_RELEASE > ( VK_LBUTTON ) &&
 		m_Flags.test ( xui::OBJECT_FLAG_INTERACTION ) ) {
+		// Set last mouse location.
+		m_Previous_mouse_location = command.mouse_location ( );
 
-		// Unfocus self from parent.
-		//	See reason above.
+		// Unfocus self from Api.
 		self_unfocus ( m_Api_ptr );
 
 		// Remove interaction flag.
-		m_Flags.flip ( xui::OBJECT_FLAG_INTERACTION );
+		m_Flags.reset ( xui::OBJECT_FLAG_INTERACTION );
 	};
 
 	// Update location drag.
@@ -66,7 +61,6 @@ void xui::object_form::input ( xui::input_command& command ) {
 		next_location -= m_Previous_mouse_location;
 
 		// Setup for next location.
-		// Please, clamp this to resolution size.
 		m_Location = next_location;
 
 		// Store current mouse location.
@@ -106,4 +100,10 @@ void xui::object_form::render ( void ) {
 	...Render...
 
 	*/
+
+	if ( m_Children_ptrs.empty ( ) )
+		return;
+
+	for ( auto iter = m_Children_ptrs.rbegin ( ); iter != m_Children_ptrs.rend ( ); ++iter )
+		iter->get ( )->render ( );
 };

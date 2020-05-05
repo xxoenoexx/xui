@@ -64,7 +64,6 @@ namespace xui {
 		};
 	};
 	
-
 	namespace details {
 		// Process input and recursively distrubute.
 		class input_distribution {
