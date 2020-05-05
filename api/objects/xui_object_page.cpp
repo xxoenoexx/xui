@@ -95,15 +95,14 @@ void xui::object_page::input ( xui::input_command& command ) {
 			if ( previous_data [ std::max ( row - 1U , 0U ) ].empty ( ) )
 				next_child->m_Location [ 0 ] = m_Parent_ptr->m_Location [ 1 ] + m_Parent_ptr->m_Header_height + g_Child_spacing [ 1 ] * 0.5f;
 			else {
-
 				std::uint32_t column_y { };
 
 				for ( auto& data : previous_data [ row ] ) {
-					auto& [object_location , object_size] = data;
+					auto& [object_location , object_size ] = data;		
 
 					// Doesn't overlap.
-					if ( object_location [ 0 ] >= next_child->m_Location [ 0 ] + next_child->m_Size [ 0 ]
-						|| object_location [ 0 ] + object_size [ 0 ] >= next_child->m_Location [ 0 ] )
+					if ( object_location [ 0 ] < ( next_child->m_Location [ 0 ] + next_child->m_Size [ 0 ] )
+						&& ( object_location [ 0 ] + object_size [ 0 ] ) < next_child->m_Location [ 0 ] )
 						continue;
 
 					// Objects far y.
